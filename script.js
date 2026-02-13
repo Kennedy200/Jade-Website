@@ -1,19 +1,12 @@
 // script.js
-// Valentine's Website for Jade/Angel
-// Optimized for mobile with Three.js, smooth animations, and love
-
 class ValentineSite {
     constructor() {
         this.currentSection = 0;
         this.totalSections = 6;
-        this.isScrolling = false;
         this.hearts = [];
         this.scene = null;
         this.camera = null;
         this.renderer = null;
-        this.reasonsShown = 0;
-        this.lovePercentage = 0;
-        
         this.reasonsList = [
             "Your smile", "Your laugh", "Your kindness", "Your eyes",
             "Your heart", "Your hugs", "Your kisses", "Your voice",
@@ -40,7 +33,7 @@ class ValentineSite {
             "Your spirit", "Your essence", "Your being", "Your existence",
             "Your everything", "Your infinity", "Your eternity", "Your forever"
         ];
-
+        
         this.init();
     }
 
@@ -55,12 +48,9 @@ class ValentineSite {
         this.setupFinale();
         this.setupProgressBar();
         this.setupMusicToggle();
-        this.handleResize();
         
-        // Check for reduced motion preference
         this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         
-        // Start animation loop
         this.animate();
         
         // Hide loader
@@ -69,17 +59,15 @@ class ValentineSite {
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
             }, 500);
-        }, 1500);
+        }, 2000);
     }
 
     setupLoader() {
-        // Loader is handled in CSS and init
+        // CSS handles the animation
     }
 
     setupThreeJS() {
         const canvas = document.getElementById('hearts-canvas');
-        
-        // Mobile optimization: reduce pixel ratio
         const pixelRatio = Math.min(window.devicePixelRatio, 2);
         
         this.scene = new THREE.Scene();
@@ -96,11 +84,9 @@ class ValentineSite {
         this.renderer.setPixelRatio(pixelRatio);
         this.renderer.setClearColor(0x000000, 0);
 
-        // Create heart particles
+        // Create heart shape
         const heartShape = new THREE.Shape();
         const x = 0, y = 0;
-        
-        // Heart shape path
         heartShape.moveTo(x + 5, y + 5);
         heartShape.bezierCurveTo(x + 5, y + 5, x + 4, y, x, y);
         heartShape.bezierCurveTo(x - 6, y, x - 6, y + 7, x - 6, y + 7);
@@ -110,42 +96,42 @@ class ValentineSite {
         heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
 
         const geometry = new THREE.ShapeGeometry(heartShape);
-        const material = new THREE.MeshBasicMaterial({ 
-            color: 0xFF1493, 
-            transparent: true, 
-            opacity: 0.6,
-            side: THREE.DoubleSide
-        });
-
-        // Create fewer particles on mobile
+        
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? 15 : 25;
+        const particleCount = isMobile ? 12 : 20;
 
         for (let i = 0; i < particleCount; i++) {
-            const mesh = new THREE.Mesh(geometry, material.clone());
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0xFF1493, 
+                transparent: true, 
+                opacity: 0.4 + Math.random() * 0.3,
+                side: THREE.DoubleSide
+            });
             
-            mesh.position.x = (Math.random() - 0.5) * 50;
-            mesh.position.y = (Math.random() - 0.5) * 50;
-            mesh.position.z = (Math.random() - 0.5) * 20;
+            const mesh = new THREE.Mesh(geometry, material);
             
-            mesh.scale.setScalar(0.1 + Math.random() * 0.2);
+            mesh.position.x = (Math.random() - 0.5) * 60;
+            mesh.position.y = (Math.random() - 0.5) * 60;
+            mesh.position.z = (Math.random() - 0.5) * 30;
+            
+            mesh.scale.setScalar(0.08 + Math.random() * 0.15);
             mesh.rotation.z = Math.random() * Math.PI;
             
             mesh.userData = {
-                speedY: 0.02 + Math.random() * 0.03,
-                speedRot: 0.01 + Math.random() * 0.02,
-                wobble: Math.random() * Math.PI * 2
+                speedY: 0.01 + Math.random() * 0.02,
+                speedRot: 0.005 + Math.random() * 0.01,
+                wobble: Math.random() * Math.PI * 2,
+                originalY: mesh.position.y
             };
             
-            // Random pink shades
-            const colors = [0xFF1493, 0xFF69B4, 0xFFB6C1, 0xFFC0CB, 0xFFD700];
+            const colors = [0xFF1493, 0xFF69B4, 0xFFB6C1, 0xFFC0CB, 0xFFD700, 0xFF6B9D];
             mesh.material.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
             
             this.hearts.push(mesh);
             this.scene.add(mesh);
         }
 
-        // Touch events for mobile interaction
+        // Touch interaction
         let touchY = 0;
         canvas.addEventListener('touchstart', (e) => {
             touchY = e.touches[0].clientY;
@@ -154,7 +140,7 @@ class ValentineSite {
         canvas.addEventListener('touchmove', (e) => {
             const deltaY = e.touches[0].clientY - touchY;
             this.hearts.forEach(heart => {
-                heart.position.y -= deltaY * 0.01;
+                heart.position.y -= deltaY * 0.005;
             });
             touchY = e.touches[0].clientY;
         }, { passive: true });
@@ -169,12 +155,11 @@ class ValentineSite {
             });
         });
 
-        // Scroll detection with IntersectionObserver
         const sections = document.querySelectorAll('.section');
         const observerOptions = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.5
+            threshold: 0.4
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -199,7 +184,7 @@ class ValentineSite {
             }
         });
 
-        // Touch swipe support
+        // Touch swipe
         let touchStartY = 0;
         let touchEndY = 0;
         
@@ -214,15 +199,13 @@ class ValentineSite {
     }
 
     handleSwipe(startY, endY) {
-        const threshold = 50;
+        const threshold = 80;
         const diff = startY - endY;
         
         if (Math.abs(diff) > threshold) {
             if (diff > 0 && this.currentSection < this.totalSections - 1) {
-                // Swipe up - next section
                 this.scrollToSection(this.currentSection + 1);
             } else if (diff < 0 && this.currentSection > 0) {
-                // Swipe down - previous section
                 this.scrollToSection(this.currentSection - 1);
             }
         }
@@ -242,19 +225,19 @@ class ValentineSite {
 
     triggerSectionAnimations(index) {
         switch(index) {
-            case 1: // Love Letter
-                this.animateLetter();
+            case 1:
+                // Envelope section - wait for user interaction
                 break;
-            case 2: // Timeline
+            case 2:
                 this.animateTimeline();
                 break;
-            case 3: // Reasons
+            case 3:
                 this.animateReasons();
                 break;
-            case 4: // Love Meter
+            case 4:
                 this.resetLoveMeter();
                 break;
-            case 5: // Finale
+            case 5:
                 this.animateFinale();
                 break;
         }
@@ -269,23 +252,13 @@ class ValentineSite {
             envelope.classList.toggle('open', isOpen);
             
             if (isOpen) {
-                setTimeout(() => this.animateLetter(), 600);
-                this.createConfetti(envelope);
+                this.createConfetti(envelope, 15);
             }
         });
     }
 
-    animateLetter() {
-        const texts = document.querySelectorAll('.typewriter-text');
-        texts.forEach((text, index) => {
-            setTimeout(() => {
-                text.classList.add('visible');
-            }, index * 800);
-        });
-    }
-
     setupTimeline() {
-        // Timeline animation triggered by intersection
+        // Animation triggered by intersection
     }
 
     animateTimeline() {
@@ -293,7 +266,7 @@ class ValentineSite {
         items.forEach((item, index) => {
             setTimeout(() => {
                 item.classList.add('visible');
-            }, index * 300);
+            }, index * 200);
         });
     }
 
@@ -304,23 +277,18 @@ class ValentineSite {
         this.reasonsList.forEach((reason, index) => {
             const card = document.createElement('div');
             card.className = 'reason-card';
+            const emojis = ['💖', '✨', '🌸', '💕', '🎀', '💗', '🌺', '💝', '💖', '✨', '🌹', '💘'];
             card.innerHTML = `
-                <span class="reason-emoji">${this.getEmoji(index)}</span>
+                <span class="reason-emoji">${emojis[index % emojis.length]}</span>
                 <span class="reason-text">${reason}</span>
             `;
-            card.style.transitionDelay = `${index * 0.05}s`;
+            card.style.transitionDelay = `${index * 0.03}s`;
             grid.appendChild(card);
         });
 
-        // Scroll listener for infinite feel
-        grid.addEventListener('scroll', () => {
-            this.updateReasonCounter(grid);
-        });
-    }
-
-    getEmoji(index) {
-        const emojis = ['💖', '✨', '🌸', '💕', '🎀', '💗', '🌺', '💝', '💖', '✨'];
-        return emojis[index % emojis.length];
+        // Update counter on scroll
+        const container = document.querySelector('.reasons-container');
+        container.addEventListener('scroll', () => this.updateReasonCounter());
     }
 
     animateReasons() {
@@ -331,63 +299,69 @@ class ValentineSite {
                     entry.target.classList.add('visible');
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
         cards.forEach(card => observer.observe(card));
+        
+        // Initial count
+        setTimeout(() => this.updateReasonCounter(), 500);
     }
 
-    updateReasonCounter(grid) {
-        const cards = grid.querySelectorAll('.reason-card');
-        let visible = 0;
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                visible++;
-            }
-        });
-        document.getElementById('reasonCount').textContent = visible;
+    updateReasonCounter() {
+        const cards = document.querySelectorAll('.reason-card.visible');
+        document.getElementById('reasonCount').textContent = cards.length;
     }
 
     setupLoveMeter() {
-        const hearts = document.querySelectorAll('.meter-hearts span');
-        const percentage = document.getElementById('lovePercentage');
-        const hiddenMessage = document.getElementById('hiddenMessage');
+        const hearts = document.querySelectorAll('.meter-heart');
+        const percentageDisplay = document.getElementById('percentageDisplay');
+        const loveMessage = document.getElementById('loveMessage');
         
         hearts.forEach((heart, index) => {
             heart.addEventListener('click', () => {
-                // Activate this heart and all before it
+                // Fill hearts up to clicked one
                 hearts.forEach((h, i) => {
-                    h.classList.toggle('active', i <= index);
+                    if (i <= index) {
+                        h.classList.add('active');
+                        h.textContent = '💖';
+                    } else {
+                        h.classList.remove('active');
+                        h.textContent = '🤍';
+                    }
                 });
                 
-                this.lovePercentage = (index + 1) * 20;
-                percentage.textContent = `${this.lovePercentage}%`;
+                const percentage = (index + 1) * 20;
+                percentageDisplay.textContent = `${percentage}%`;
                 
-                // Pulse animation
-                heart.style.transform = 'scale(1.4)';
+                // Animate percentage
+                percentageDisplay.style.transform = 'scale(1.2)';
                 setTimeout(() => {
-                    heart.style.transform = '';
-                }, 300);
-
-                if (this.lovePercentage === 100) {
+                    percentageDisplay.style.transform = 'scale(1)';
+                }, 200);
+                
+                if (percentage === 100) {
                     setTimeout(() => {
-                        hiddenMessage.classList.add('show');
-                        this.createConfetti(document.querySelector('.meter-container'));
-                    }, 500);
+                        loveMessage.classList.add('show');
+                        this.createConfetti(document.querySelector('.meter-container'), 30);
+                    }, 400);
+                } else {
+                    loveMessage.classList.remove('show');
                 }
             });
         });
     }
 
     resetLoveMeter() {
-        const hearts = document.querySelectorAll('.meter-hearts span');
-        const percentage = document.getElementById('lovePercentage');
-        const hiddenMessage = document.getElementById('hiddenMessage');
+        const hearts = document.querySelectorAll('.meter-heart');
+        const percentageDisplay = document.getElementById('percentageDisplay');
+        const loveMessage = document.getElementById('loveMessage');
         
-        hearts.forEach(h => h.classList.remove('active'));
-        percentage.textContent = '0%';
-        hiddenMessage.classList.remove('show');
-        this.lovePercentage = 0;
+        hearts.forEach(h => {
+            h.classList.remove('active');
+            h.textContent = '🤍';
+        });
+        percentageDisplay.textContent = '0%';
+        loveMessage.classList.remove('show');
     }
 
     setupFinale() {
@@ -396,33 +370,26 @@ class ValentineSite {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => {
                 location.reload();
-            }, 1000);
+            }, 800);
         });
     }
 
     animateFinale() {
-        const explosion = document.getElementById('heartExplosion');
-        explosion.innerHTML = '';
+        const ring = document.getElementById('heartRing');
+        ring.innerHTML = '';
         
-        // Create explosion of hearts
-        for (let i = 0; i < 30; i++) {
+        // Create orbiting hearts
+        for (let i = 0; i < 12; i++) {
             const heart = document.createElement('div');
-            heart.className = 'explosion-heart';
-            heart.textContent = ['💖', '💕', '💗', '💝', '💘'][Math.floor(Math.random() * 5)];
-            
-            const angle = (Math.PI * 2 * i) / 30;
-            const distance = 200 + Math.random() * 200;
-            const tx = Math.cos(angle) * distance;
-            const ty = Math.sin(angle) * distance;
-            
-            heart.style.setProperty('--tx', `${tx}px`);
-            heart.style.setProperty('--ty', `${ty}px`);
-            heart.style.left = '50%';
-            heart.style.top = '50%';
-            heart.style.animationDelay = `${Math.random() * 0.5}s`;
-            
-            explosion.appendChild(heart);
+            heart.className = 'ring-heart';
+            heart.textContent = ['💖', '💕', '💗', '💝', '💘', '✨'][i % 6];
+            heart.style.animationDelay = `${i * 0.8}s`;
+            heart.style.animationDuration = `${8 + i * 0.5}s`;
+            ring.appendChild(heart);
         }
+        
+        // Create explosion effect
+        this.createConfetti(document.querySelector('.finale-container'), 50);
     }
 
     setupProgressBar() {
@@ -438,89 +405,59 @@ class ValentineSite {
         const toggle = document.getElementById('musicToggle');
         let isPlaying = false;
         
-        // Create audio context for potential sound effects
-        // Note: Browsers require user interaction before playing audio
         toggle.addEventListener('click', () => {
             isPlaying = !isPlaying;
             toggle.classList.toggle('playing', isPlaying);
             toggle.textContent = isPlaying ? '🔇' : '🎵';
             
-            // Visual feedback only - actual audio would need a file
-            if (isPlaying) {
-                this.showToast('Music would play here 💕 (Add your song file)');
-            }
+            // In a real implementation, you would toggle audio here
+            // For now, just visual feedback
         });
     }
 
-    showToast(message) {
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            font-family: 'Dancing Script', cursive;
-            color: var(--pink-hot);
-            z-index: 10000;
-            animation: fadeInUp 0.5s ease;
-        `;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
-
-    createConfetti(element) {
+    createConfetti(element, count = 20) {
         const rect = element.getBoundingClientRect();
-        const colors = ['#FF1493', '#FF69B4', '#FFB6C1', '#FFD700', '#FFF'];
+        const colors = ['#FF1493', '#FF69B4', '#FFB6C1', '#FFD700', '#FFF', '#FF6B9D'];
         
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < count; i++) {
             const confetti = document.createElement('div');
             confetti.style.cssText = `
                 position: fixed;
-                width: 10px;
-                height: 10px;
+                width: ${8 + Math.random() * 8}px;
+                height: ${8 + Math.random() * 8}px;
                 background: ${colors[Math.floor(Math.random() * colors.length)]};
                 left: ${rect.left + rect.width / 2}px;
                 top: ${rect.top + rect.height / 2}px;
-                border-radius: 50%;
+                border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
                 pointer-events: none;
                 z-index: 9999;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             `;
             
             const angle = Math.random() * Math.PI * 2;
-            const velocity = 5 + Math.random() * 5;
-            const tx = Math.cos(angle) * 100 * velocity;
-            const ty = Math.sin(angle) * 100 * velocity;
+            const velocity = 3 + Math.random() * 5;
+            const tx = Math.cos(angle) * 150 * velocity;
+            const ty = Math.sin(angle) * 150 * velocity;
+            const rot = Math.random() * 720;
             
             confetti.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                { 
+                    transform: 'translate(0, 0) rotate(0deg) scale(1)', 
+                    opacity: 1 
+                },
+                { 
+                    transform: `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(0)`, 
+                    opacity: 0 
+                }
             ], {
-                duration: 1000 + Math.random() * 500,
+                duration: 1000 + Math.random() * 1000,
                 easing: 'cubic-bezier(0, .9, .57, 1)',
                 fill: 'forwards'
             });
             
             document.body.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 1500);
+            setTimeout(() => confetti.remove(), 2000);
         }
-    }
-
-    handleResize() {
-        window.addEventListener('resize', () => {
-            if (this.camera && this.renderer) {
-                this.camera.aspect = window.innerWidth / window.innerHeight;
-                this.camera.updateProjectionMatrix();
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        });
     }
 
     animate() {
@@ -528,36 +465,39 @@ class ValentineSite {
         
         if (this.prefersReducedMotion) return;
         
-        // Animate Three.js hearts
         const time = Date.now() * 0.001;
         
         this.hearts.forEach((heart, index) => {
-            // Gentle floating motion
-            heart.position.y += Math.sin(time + heart.userData.wobble) * 0.02;
+            // Floating motion
+            heart.position.y = heart.userData.originalY + Math.sin(time + heart.userData.wobble) * 3;
             heart.rotation.y += heart.userData.speedRot;
-            heart.rotation.z += Math.sin(time * 0.5) * 0.01;
+            heart.rotation.z = Math.sin(time * 0.5 + index) * 0.1;
             
-            // Reset if too high/low
-            if (heart.position.y > 25) heart.position.y = -25;
-            if (heart.position.y < -25) heart.position.y = 25;
+            // Wrap around screen
+            if (heart.position.y > 35) {
+                heart.position.y = -35;
+                heart.userData.originalY = heart.position.y;
+            }
             
-            // Gentle scale breathing
-            const scale = heart.scale.x + Math.sin(time * 2 + index) * 0.0005;
-            heart.scale.setScalar(Math.max(0.05, scale));
+            // Gentle breathing scale
+            const scale = (0.1 + Math.sin(time * 2 + index) * 0.02) * (heart.scale.x > 0.1 ? 1 : 1);
+            heart.scale.setScalar(scale);
         });
         
         this.renderer.render(this.scene, this.camera);
     }
 }
 
-// Initialize when DOM is ready
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     new ValentineSite();
 });
 
-// Service Worker for offline capability (optional enhancement)
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('data:text/javascript,').catch(() => {
-        // Silent fail - not critical for Valentine's site
-    });
-}
+// Handle resize
+window.addEventListener('resize', () => {
+    if (window.valentineSite && window.valentineSite.camera && window.valentineSite.renderer) {
+        window.valentineSite.camera.aspect = window.innerWidth / window.innerHeight;
+        window.valentineSite.camera.updateProjectionMatrix();
+        window.valentineSite.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+});

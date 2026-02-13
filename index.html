@@ -35,7 +35,7 @@
         <div class="dot" data-section="5"></div>
     </nav>
 
-    <!-- Audio Element (Optional - browser policy requires interaction) -->
+    <!-- Music Toggle -->
     <button id="musicToggle" class="music-toggle" aria-label="Toggle Music">🎵</button>
 
     <!-- Section 1: Hero -->
@@ -70,110 +70,132 @@
 
     <!-- Section 2: Love Letter -->
     <section class="section love-letter" id="section1">
-        <div class="envelope-container" id="envelope">
-            <div class="envelope">
-                <div class="envelope-front">
-                    <div class="seal">💌</div>
-                    <p class="tap-hint">Tap to open</p>
+        <div class="envelope-wrapper">
+            <div class="envelope-container" id="envelope">
+                <div class="envelope">
+                    <div class="envelope-front">
+                        <div class="seal">💌</div>
+                        <p class="tap-hint">Tap to open your letter</p>
+                        <p class="from-text">From your loving heart</p>
+                    </div>
+                    <div class="envelope-flap"></div>
+                    <div class="envelope-back"></div>
                 </div>
-                <div class="envelope-back"></div>
-                <div class="letter">
+                <div class="letter-paper" id="letterPaper">
                     <div class="letter-content">
-                        <h2>My Dearest Jade,</h2>
-                        <p class="typewriter-text" id="letterText">
-                            From the moment I met you, my world transformed into something magical. You are not just my girlfriend—you are my best friend, my confidante, my inspiration, and my forever love.
-                        </p>
-                        <p class="typewriter-text delayed">
-                            Your smile lights up my darkest days. Your laugh is my favorite melody. Every moment with you feels like a beautiful dream I never want to wake from.
-                        </p>
-                        <p class="signature">Forever Yours,<br>💕</p>
+                        <div class="letter-header">
+                            <span class="heart-icon">💕</span>
+                            <h2>My Dearest Jade,</h2>
+                        </div>
+                        <div class="letter-body">
+                            <p class="type-line">From the moment I met you, my world transformed into something magical.</p>
+                            <p class="type-line">You are not just my girlfriend—you are my best friend, my confidante, my inspiration, and my forever love.</p>
+                            <p class="type-line">Your smile lights up my darkest days. Your laugh is my favorite melody.</p>
+                            <p class="type-line">Every moment with you feels like a beautiful dream I never want to wake from.</p>
+                            <p class="type-line">You are my Angel in every sense of the word.</p>
+                        </div>
+                        <div class="letter-footer">
+                            <p class="signature">Forever Yours,</p>
+                            <p class="love-signature">💕 Your Love 💕</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section 3: Timeline of Us -->
+    <!-- Section 3: Timeline -->
     <section class="section timeline" id="section2">
         <h2 class="section-title">Our Love Story</h2>
         <div class="timeline-container">
             <div class="timeline-line"></div>
             <div class="timeline-items">
-                <div class="timeline-item" data-year="First Meeting">
-                    <div class="timeline-dot">✨</div>
+                <div class="timeline-item left">
                     <div class="timeline-content">
+                        <div class="timeline-icon">✨</div>
                         <h3>The Day We Met</h3>
-                        <p>When destiny brought two souls together</p>
+                        <p>When destiny brought two beautiful souls together</p>
+                        <span class="timeline-date">The Beginning</span>
                     </div>
+                    <div class="timeline-dot">💫</div>
                 </div>
-                <div class="timeline-item" data-year="First Date">
+                <div class="timeline-item right">
                     <div class="timeline-dot">🌸</div>
                     <div class="timeline-content">
+                        <div class="timeline-icon">🌸</div>
                         <h3>Our First Date</h3>
-                        <p>Nervous smiles and butterflies</p>
+                        <p>Nervous smiles, butterflies, and magic in the air</p>
+                        <span class="timeline-date">First Chapter</span>
                     </div>
                 </div>
-                <div class="timeline-item" data-year="First Kiss">
-                    <div class="timeline-dot">💋</div>
+                <div class="timeline-item left">
                     <div class="timeline-content">
+                        <div class="timeline-icon">💋</div>
                         <h3>That Magical Kiss</h3>
-                        <p>When time stood still</p>
+                        <p>When time stood still and hearts became one</p>
+                        <span class="timeline-date">The Moment</span>
                     </div>
+                    <div class="timeline-dot">💋</div>
                 </div>
-                <div class="timeline-item" data-year="Today">
+                <div class="timeline-item right">
                     <div class="timeline-dot">💍</div>
                     <div class="timeline-content">
+                        <div class="timeline-icon">💖</div>
                         <h3>Forever & Always</h3>
-                        <p>Every day I choose you</p>
+                        <p>Every day I choose you, today and forever</p>
+                        <span class="timeline-date">Eternity</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section 4: 100 Reasons -->
+    <!-- Section 4: Reasons -->
     <section class="section reasons" id="section3">
-        <h2 class="section-title">Why I Love You</h2>
-        <div class="reasons-grid" id="reasonsGrid">
-            <!-- Generated by JS -->
+        <h2 class="section-title">100 Reasons Why I Love You</h2>
+        <div class="reasons-container">
+            <div class="reasons-grid" id="reasonsGrid"></div>
         </div>
         <div class="reason-counter">
-            <span id="reasonCount">0</span>/100 Reasons
+            <span id="reasonCount">0</span>/100 Reasons Discovered
         </div>
     </section>
 
-    <!-- Section 5: Interactive Love Meter -->
+    <!-- Section 5: Love Meter -->
     <section class="section love-meter" id="section4">
         <h2 class="section-title">Our Love Meter</h2>
         <div class="meter-container">
-            <div class="heart-meter" id="heartMeter">
-                <div class="meter-fill"></div>
-                <div class="meter-hearts">
-                    <span>💗</span>
-                    <span>💗</span>
-                    <span>💗</span>
-                    <span>💗</span>
-                    <span>💗</span>
-                </div>
+            <p class="meter-instruction">Tap the hearts to measure our love!</p>
+            <div class="hearts-row" id="heartsRow">
+                <span class="meter-heart" data-value="20">🤍</span>
+                <span class="meter-heart" data-value="40">🤍</span>
+                <span class="meter-heart" data-value="60">🤍</span>
+                <span class="meter-heart" data-value="80">🤍</span>
+                <span class="meter-heart" data-value="100">🤍</span>
             </div>
-            <p class="meter-text">Tap the hearts to fill our love!</p>
-            <div class="love-percentage" id="lovePercentage">0%</div>
-        </div>
-        <div class="hidden-message" id="hiddenMessage">
-            <p>My love for you is infinite! 💕</p>
+            <div class="percentage-display" id="percentageDisplay">0%</div>
+            <div class="love-message" id="loveMessage">
+                <p>My love for you is infinite and eternal! 💕</p>
+                <div class="sparkles">✨💖✨</div>
+            </div>
         </div>
     </section>
 
-    <!-- Section 6: Final Message -->
+    <!-- Section 6: Finale -->
     <section class="section finale" id="section5">
-        <div class="finale-content">
-            <div class="heart-explosion" id="heartExplosion"></div>
-            <h2 class="final-text">You Are My<br><span class="highlight">Forever</span></h2>
-            <p class="final-message">
-                Jade, you are the most beautiful chapter in my life story. 
-                Thank you for being my Angel. Happy Valentine's Day! 💕
+        <div class="finale-container">
+            <div class="heart-ring" id="heartRing"></div>
+            <h2 class="finale-title">You Are My</h2>
+            <h1 class="forever-text">Forever</h1>
+            <p class="finale-message">
+                Jade, you are the most beautiful chapter in my life story.<br>
+                Thank you for being my Angel.<br>
+                Happy Valentine's Day! 💕
             </p>
-            <button class="restart-btn" id="restartBtn">Watch Again ↻</button>
+            <button class="restart-btn" id="restartBtn">
+                <span>Watch Again</span>
+                <span class="btn-icon">↻</span>
+            </button>
         </div>
     </section>
 
